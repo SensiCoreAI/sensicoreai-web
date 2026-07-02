@@ -1,4 +1,4 @@
-const canvas = document.getElementById("bg");
+⁸const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
 function resize() {
@@ -10,7 +10,7 @@ resize();
 window.addEventListener("resize", resize);
 
 const particles = [];
-const total = 80;
+const total = 120;
 
 for (let i = 0; i < total; i++) {
     particles.push({
@@ -43,7 +43,7 @@ function animate() {
     const dy = p.y - p2.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 120) {
+    if (dist < 80) {
 
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
