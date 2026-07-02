@@ -37,6 +37,26 @@ function animate() {
         ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
         ctx.fillStyle = "#ff2222";
         ctx.fill();
+        for (let p2 of particles) {
+
+    const dx = p.x - p2.x;
+    const dy = p.y - p2.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 120) {
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+
+        ctx.strokeStyle = "rgba(255,40,40," + (1 - dist / 120) + ")";
+        ctx.lineWidth = 1;
+
+        ctx.stroke();
+
+    }
+
+        }
     }
 
     requestAnimationFrame(animate);
