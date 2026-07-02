@@ -1,17 +1,45 @@
-const btn = document.getElementById("startBtn");
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
-btn.addEventListener("click", () => {
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
-    btn.innerText = "CARGANDO...";
+resize();
+window.addEventListener("resize", resize);
 
-    btn.style.transform = "scale(0.95)";
+const particles = [];
+const total = 80;
 
-    setTimeout(() => {
+for (let i = 0; i < total; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6
+    });
+}
 
-        btn.innerText = "COMENZAR";
+function animate() {
 
-        btn.style.transform = "scale(1)";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    },1000);
+    for (let p of particles) {
 
-});
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff2222";
+        ctx.fill();
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
