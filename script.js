@@ -21,6 +21,7 @@ for (let i = 0; i < total; i++) {
     });
 }
 
+let glow = 0;
 function animate() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
