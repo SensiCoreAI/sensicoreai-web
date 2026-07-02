@@ -54,6 +54,27 @@ function animate() {
         ctx.lineWidth = 1;
 
         ctx.stroke();
+        glow += 0.02;
+
+const t = (Math.sin(glow + (p.x + p.y) * 0.01) + 1) / 2;
+
+ctx.beginPath();
+ctx.moveTo(
+    p.x + (p2.x - p.x) * t,
+    p.y + (p2.y - p.y) * t
+);
+ctx.arc(
+    p.x + (p2.x - p.x) * t,
+    p.y + (p2.y - p.y) * t,
+    2.5,
+    0,
+    Math.PI * 2
+);
+ctx.fillStyle = "#ffffff";
+ctx.shadowBlur = 15;
+ctx.shadowColor = "#ff0000";
+ctx.fill();
+ctx.shadowBlur = 0;
 
     }
 
