@@ -10,7 +10,7 @@ resize();
 window.addEventListener("resize", resize);
 
 const particles = [];
-const total = 120;
+const total = 140;
 
 for (let i = 0; i < total; i++) {
     particles.push({
@@ -43,7 +43,7 @@ function animate() {
     const dy = p.y - p2.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 80) {
+    if (dist < 120) {
 
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
