@@ -9,64 +9,63 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-const POINTS = 180;
-const MAX_DISTANCE = 130;
-
 const nodes = [];
+const links = [];
 
-for (let i = 0; i < POINTS; i++) {
+const NODE_COUNT = 220;
+const LINK_DISTANCE = 120;
+
+for (let i = 0; i < NODE_COUNT; i++) {
 
     nodes.push({
+
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        glow: Math.random()
+
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: (Math.random() - 0.5) * 0.08
+
     });
 
 }
 
-function drawNode(n){
+function updateNodes() {
 
-    ctx.beginPath();
-    ctx.arc(n.x,n.y,2.2,0,Math.PI*2);
+    for (const n of nodes) {
 
-    ctx.fillStyle="#ff2a2a";
+        n.x += n.vx;
+        n.y += n.vy;
 
-    ctx.shadowBlur=10;
-    ctx.shadowColor="#ff0000";
+        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
 
-    ctx.fill();
-
-    ctx.shadowBlur=0;
+    }
 
 }
 
-function drawConnections(){
+function buildLinks() {
 
-    for(let i=0;i<nodes.length;i++){
+    links.length = 0;
 
-        for(let j=i+1;j<nodes.length;j++){
+    for (let i = 0; i < nodes.length; i++) {
 
-            const a=nodes[i];
-            const b=nodes[j];
+        for (let j = i + 1; j < nodes.length; j++) {
 
-            const dx=a.x-b.x;
-            const dy=a.y-b.y;
+            const a = nodes[i];
+            const b = nodes[j];
 
-            const dist=Math.sqrt(dx*dx+dy*dy);
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
 
-            if(dist<MAX_DISTANCE){
+            const dist = Math.sqrt(dx * dx + dy * dy);
 
-                ctx.beginPath();
+            if (dist < LINK_DISTANCE) {
 
-                ctx.moveTo(a.x,a.y);
-
-                ctx.lineTo(b.x,b.y);
-
-                ctx.strokeStyle="rgba(255,40,40,"+(1-dist/MAX_DISTANCE)+")";
-
-                ctx.lineWidth=1;
-
-                ctx.stroke();
+                links.push({
+                    a,
+                    b,
+                    alpha: 1 - dist / LINK_DISTANCE
+                });
 
             }
 
@@ -76,82 +75,71 @@ function drawConnections(){
 
 }
 
-const pulses = [];
+function drawNetwork(time) {
 
-for(let i=0;i<35;i++){
+    ctx.lineWidth = 1.2;
 
-    pulses.push({
-        a:0,
-        b:0,
-        t:Math.random(),
-        speed:0.004+Math.random()*0.01
-    });
+    for (const link of links) {
 
-}
-
-function updatePulses(){
-
-    for(const p of pulses){
-
-        p.t += p.speed;
-
-        if(p.t >= 1){
-
-            p.t = 0;
-
-            p.a = Math.floor(Math.random()*nodes.length);
-            p.b = Math.floor(Math.random()*nodes.length);
-
-        }
-
-        const A = nodes[p.a];
-        const B = nodes[p.b];
-
-        const dx = B.x - A.x;
-        const dy = B.y - A.y;
-
-        const x = A.x + dx * p.t;
-        const y = A.y + dy * p.t;
+        const { a, b, alpha } = link;
 
         ctx.beginPath();
 
-        ctx.arc(x,y,3.5,0,Math.PI*2);
+        ctx.moveTo(a.x, a.y);
 
-        ctx.fillStyle="#ffffff";
+        const mx = (a.x + b.x) / 2 + Math.sin(time * 0.001 + a.x * 0.02) * 8;
+        const my = (a.y + b.y) / 2 + Math.cos(time * 0.001 + b.y * 0.02) * 8;
 
-        ctx.shadowBlur=18;
-        ctx.shadowColor="#ff0000";
+        ctx.quadraticCurveTo(
+            mx,
+            my,
+            b.x,
+            b.y
+        );
 
-        ctx.fill();
+        ctx.strokeStyle = `rgba(255,40,40,${alpha})`;
 
-        ctx.shadowBlur=0;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#ff2020";
+
+        ctx.stroke();
 
     }
 
-            }
+    ctx.shadowBlur = 0;
 
-function animate(){
+}
+
+function drawNodes() {
+
+    for (const n of nodes) {
+
+        ctx.beginPath();
+
+        ctx.arc(n.x, n.y, 1.8, 0, Math.PI * 2);
+
+        ctx.fillStyle = "#ff3030";
+
+        ctx.fill();
+
+    }
+
+}
+
+function animate(time){
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    drawConnections();
+    updateNodes();
 
-    drawNodeLoop();
+    buildLinks();
 
-    updatePulses();
+    drawNetwork(time);
+
+    drawNodes();
 
     requestAnimationFrame(animate);
 
 }
 
-function drawNodeLoop(){
-
-    for(const n of nodes){
-
-        drawNode(n);
-
-    }
-
-}
-
-animate();
+requestAnimationFrame(animate);
