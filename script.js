@@ -12,8 +12,8 @@ window.addEventListener("resize", resize);
 const nodes = [];
 const links = [];
 
-const NODE_COUNT = 120;
-const LINK_DISTANCE = 110;
+const NODE_COUNT = 90;
+const LINK_DISTANCE = 100;
 
 for (let i = 0; i < NODE_COUNT; i++) {
 
@@ -77,7 +77,7 @@ function buildLinks() {
 
 function drawNetwork(time) {
 
-    ctx.lineWidth = 1.8;
+    ctx.lineWidth = 1;
 
     for (const link of links) {
 
@@ -106,7 +106,7 @@ const my = cy + rx * Math.sin(angle) + ry * Math.cos(angle);
 
         ctx.strokeStyle = `rgba(255,40,40,${alpha})`;
 
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 4;
         ctx.shadowColor = "#ff2020";
 
         ctx.stroke();
