@@ -86,10 +86,17 @@ function drawNetwork(time) {
         ctx.beginPath();
 
         ctx.moveTo(a.x, a.y);
+        const angle = time * 0.0003;
 
-        const mx = (a.x + b.x) / 2 + Math.sin(time * 0.001 + a.x * 0.02) * 8;
-        const my = (a.y + b.y) / 2 + Math.cos(time * 0.001 + b.y * 0.02) * 8;
+const cx = canvas.width / 2;
+const cy = canvas.height / 2;
 
+const rx = ((a.x + b.x) / 2) - cx;
+const ry = ((a.y + b.y) / 2) - cy;
+
+const mx = cx + rx * Math.cos(angle) - ry * Math.sin(angle);
+const my = cy + rx * Math.sin(angle) + ry * Math.cos(angle);
+        
         ctx.quadraticCurveTo(
             mx,
             my,
