@@ -77,7 +77,7 @@ function buildLinks() {
 
 function drawNetwork(time) {
 
-    ctx.lineWidth = 1.2;
+    ctx.lineWidth = 1.8;
 
     for (const link of links) {
 
