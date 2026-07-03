@@ -9,64 +9,149 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-const particles = [];
-const total = 140;
+const POINTS = 180;
+const MAX_DISTANCE = 130;
 
-for (let i = 0; i < total; i++) {
-    particles.push({
+const nodes = [];
+
+for (let i = 0; i < POINTS; i++) {
+
+    nodes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6
+        glow: Math.random()
     });
+
 }
 
-let glow = 0;
-function animate() {
+function drawNode(n){
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,2.2,0,Math.PI*2);
 
-    for (let p of particles) {
+    ctx.fillStyle="#ff2a2a";
 
-        p.x += p.vx;
-        p.y += p.vy;
+    ctx.shadowBlur=10;
+    ctx.shadowColor="#ff0000";
 
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    ctx.fill();
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = "#ff2222";
-        ctx.fill();
-        for (let p2 of particles) {
+    ctx.shadowBlur=0;
 
-    const dx = p.x - p2.x;
-    const dy = p.y - p2.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+}
 
-    if (dist < 120) {
+function drawConnections(){
 
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(p2.x, p2.y);
+    for(let i=0;i<nodes.length;i++){
 
-        ctx.strokeStyle = "rgba(255,40,40," + (1 - dist / 120) + ")";
-        ctx.lineWidth = 1;
+        for(let j=i+1;j<nodes.length;j++){
 
-        ctx.shadowBlur = 8;
-ctx.shadowColor = "#ff3333";
-        
-        ctx.stroke();
+            const a=nodes[i];
+            const b=nodes[j];
 
-        ctx.shadowBlur = 0;
-        
+            const dx=a.x-b.x;
+            const dy=a.y-b.y;
 
-    }
+            const dist=Math.sqrt(dx*dx+dy*dy);
+
+            if(dist<MAX_DISTANCE){
+
+                ctx.beginPath();
+
+                ctx.moveTo(a.x,a.y);
+
+                ctx.lineTo(b.x,b.y);
+
+                ctx.strokeStyle="rgba(255,40,40,"+(1-dist/MAX_DISTANCE)+")";
+
+                ctx.lineWidth=1;
+
+                ctx.stroke();
+
+            }
 
         }
+
     }
 
+}
+
+const pulses = [];
+
+for(let i=0;i<35;i++){
+
+    pulses.push({
+        a:0,
+        b:0,
+        t:Math.random(),
+        speed:0.004+Math.random()*0.01
+    });
+
+}
+
+function updatePulses(){
+
+    for(const p of pulses){
+
+        p.t += p.speed;
+
+        if(p.t >= 1){
+
+            p.t = 0;
+
+            p.a = Math.floor(Math.random()*nodes.length);
+            p.b = Math.floor(Math.random()*nodes.length);
+
+        }
+
+        const A = nodes[p.a];
+        const B = nodes[p.b];
+
+        const dx = B.x - A.x;
+        const dy = B.y - A.y;
+
+        const x = A.x + dx * p.t;
+        const y = A.y + dy * p.t;
+
+        ctx.beginPath();
+
+        ctx.arc(x,y,3.5,0,Math.PI*2);
+
+        ctx.fillStyle="#ffffff";
+
+        ctx.shadowBlur=18;
+        ctx.shadowColor="#ff0000";
+
+        ctx.fill();
+
+        ctx.shadowBlur=0;
+
+    }
+
+            }
+
+function animate(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawConnections();
+
+    drawNodeLoop();
+
+    updatePulses();
+
     requestAnimationFrame(animate);
+
+}
+
+function drawNodeLoop(){
+
+    for(const n of nodes){
+
+        drawNode(n);
+
+    }
+
 }
 
 animate();
