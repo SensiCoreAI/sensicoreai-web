@@ -12,8 +12,8 @@ window.addEventListener("resize", resize);
 const nodes = [];
 const links = [];
 
-const NODE_COUNT = 100;
-const LINK_DISTANCE = 90;
+const NODE_COUNT = 120;
+const LINK_DISTANCE = 110;
 
 for (let i = 0; i < NODE_COUNT; i++) {
 
